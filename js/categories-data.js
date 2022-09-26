@@ -1,4 +1,4 @@
-const mainData = () => {
+const categoriesData = () => {
   const preloader = document.querySelector('.preloder');
 
   const renderGenreList = (genres) => {
@@ -12,12 +12,12 @@ const mainData = () => {
   }
 
   const renderAnimeList = (arr, genres) => {
-    const wrapperGenres = document.querySelector('.product .col-lg-8');
+    const wrapperGenres = document.querySelector('.product-page .col-lg-8');
 
     genres.forEach((genre) => {
       const productBlock = document.createElement('div');
       const listBlock = document.createElement('div');
-      const list = arr.filter(item => item.ganre === genre);
+      const list = arr.filter(item => item.tags.includes(genre));
 
       listBlock.classList.add('row');
       productBlock.classList.add('mb-5');
@@ -103,15 +103,20 @@ const mainData = () => {
     .then((response) => response.json())
     .then((data) => {
       const genres = new Set();
+      const genreParams = new URLSearchParams(window.location.search).get('genre');
 
       data.forEach((item) => {
         genres.add(item.ganre)
       })
 
       renderTopAnime(data.sort((a, b) => b.views - a.views).slice(0, 5));
-      renderAnimeList(data, genres);
+      if (genreParams) {
+        renderAnimeList(data, [genreParams]);
+      } else {
+        renderAnimeList(data, genres);
+      }
       renderGenreList(genres);
     })
 }
 
-mainData();
+categoriesData();
